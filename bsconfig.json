@@ -1,0 +1,11 @@
+{
+    "name": "tiny-wonder-commonlib",
+    "sources": [
+        {
+            "dir": "src",
+            "subdirs": true
+        }
+    ],
+    "refmt": 3,
+    "namespace": true
+}
