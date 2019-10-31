@@ -4,8 +4,8 @@
     "authors": "yyc",
     "license": "MIT",
     "scripts": {
-      "watch": "bsb -clean-world -make-world -w",
-      "build": "bsb -clean-world -make-world"
+      "bsb:watch": "bsb -clean-world -make-world -w",
+      "bsb:build": "bsb -clean-world -make-world"
     },
     "devDependencies": {
       "bs-platform": "^5.2.0"
