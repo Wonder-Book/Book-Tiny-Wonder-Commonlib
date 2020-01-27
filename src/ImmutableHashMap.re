@@ -14,9 +14,9 @@ let set = (key: string, value: 'a, map: t('a)): t('a) => {
 
 let get = HashMap.get;
 
-let unsafeGet = HashMap.unsafeGet;
+let unsafeGetByNull = HashMap.unsafeGetByNull;
 
-let fastGet = HashMap.fastGet;
+let fastGetByNull = HashMap.fastGetByNull;
 
 let has = HashMap.has;
 

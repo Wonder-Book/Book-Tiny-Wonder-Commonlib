@@ -1,53 +1,34 @@
 let createEmpty = (): Js.Dict.t(Js.Nullable.t('a)) => Js.Dict.empty();
 
-let unsafeGet = (key: string, map) =>
+let unsafeGetByNull = (key: string, map) =>
   Js.Dict.unsafeGet(map, key) |> HashMapType.nullableToNotNullable;
 
 let get = (key: string, map) => {
-  let value = unsafeGet(key, map);
-  NullUtils.isEmpty(Obj.magic(value)) ? None : Some(value);
-};
-
-/* TODO move to NullService */
-let _isInMap = value => Obj.magic(value) !== Js.Nullable.undefined;
-
-let fastGet = (key, map) => {
-  let value = unsafeGet(key, map);
-
-  (_isInMap(value), value);
+  let value = Js.Dict.unsafeGet(map, key);
+  NullUtils.isEmpty(value)
+    ? None : Some(value |> HashMapType.nullableToNotNullable);
 };
 
 let has = (key: string, map) =>
-  !NullUtils.isEmpty(unsafeGet(key, map) |> Obj.magic);
-
-/* let length = (map: Js.Dict.t(Js.Nullable.t('a))) =>
-     Js.Array.length(Js.Dict.entries(map));
-
-   let fromList = list =>
-     list |> Js.Dict.fromList |> HashMapType.dictNotNullableToDictNullable;
-
-
-      */
+  !NullUtils.isEmpty(Js.Dict.unsafeGet(map, key));
 
 let entries =
-    (map: Js.Dict.t(Js.Nullable.t('a)))
-    /* : array((Js.Dict.key, Js.Nullable.t('a))) => */
-    : array((Js.Dict.key, 'a)) =>
+    (map: Js.Dict.t(Js.Nullable.t('a))): array((Js.Dict.key, 'a)) =>
   map |> Js.Dict.entries |> HashMapType.entriesNullableToEntriesNotNullable;
+
+let fastGetByNull = (key, map: Js.Dict.t(Js.Nullable.t('a))) => {
+  let value = Js.Dict.unsafeGet(map, key);
+
+  (NullUtils.isInMap(value), value |> HashMapType.nullableToNotNullable);
+};
 
 let getValidEntries =
     (map: Js.Dict.t(Js.Nullable.t('a))): array((Js.Dict.key, 'a)) =>
   map
   |> entries
   |> HashMapType.entriesNotNullableToEntriesNullable
-  |> Js.Array.filter(((key, value)) => value |> _isInMap)
+  |> Js.Array.filter(((_, value)) => value |> NullUtils.isInMap)
   |> HashMapType.entriesNullableToEntriesNotNullable;
-
-/* let getValidValues = map =>
-   map
-   |> Js.Dict.values
-   |> Js.Array.filter(value => value |> _isInMap)
-   |> HashMapType.arrayNullableToArrayNotNullable; */
 
 let _mutableSet = (key: string, value, map) => {
   Js.Dict.set(map, key, value);
@@ -65,45 +46,3 @@ let copy =
        _createEmpty(),
      )
   |> HashMapType.dictNotNullableToDictNullable;
-/*
- let map =
-     (
-       func: (. Js.Nullable.t('a)) => Js.Nullable.t('b),
-       map: Js.Dict.t(Js.Nullable.t('a)),
-     )
-     : Js.Dict.t(Js.Nullable.t('b)) =>
-   Js.Dict.map(func, map);
-
- let mapValid = (func, map) =>
-   map
-   |> Js.Dict.map((. value) =>
-        if (NullService.isNotInMap(value)) {
-          Js.Nullable.undefined;
-        } else {
-          func(. value |> SparseMapType.nullableToNotNullable)
-          |> SparseMapType.notNullableToNullable;
-        }
-      ); */
-
-/* let map =
-       (func: (. 'a) => 'b, map: Js.Dict.t(Js.Nullable.t('a)))
-       : Js.Dict.t(Js.Nullable.t('b)) =>
-     Js.Dict.map(
-       (. value) =>
-         func(. value |> HashMapType.nullableToNotNullable)
-         |> HashMapType.notNullableToNullable,
-       map,
-     );
-
-   let mapValid =
-       (func: (. 'a) => 'b, map: Js.Dict.t(Js.Nullable.t('a)))
-       : Js.Dict.t(Js.Nullable.t('b)) =>
-     map
-     |> Js.Dict.map((. value) =>
-          if (NullService.isNotInMap(value)) {
-            Js.Nullable.undefined;
-          } else {
-            func(. value |> SparseMapType.nullableToNotNullable)
-            |> SparseMapType.notNullableToNullable;
-          }
-        ); */
