@@ -1,3 +1,1 @@
-let isEmpty = value =>
-  Obj.magic(value) === Js.Nullable.null
-  || Obj.magic(value) === Js.Nullable.undefined;
+let isEmpty = value => value |> Js.Nullable.test;
